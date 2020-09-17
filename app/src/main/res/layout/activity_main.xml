@@ -17,6 +17,46 @@
         app:layout_constraintStart_toEndOf="@+id/editText"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/snapBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="47dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:text="Snap"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="598dp" />
+
+    <Button
+        android:id="@+id/searchBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:text="Search"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="599dp" />
+
+    <Button
+        android:id="@+id/rightBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:text="Right"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="516dp" />
+
+    <Button
+        android:id="@+id/leftBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:text="Left"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="516dp" />
+
     <EditText
         android:id="@+id/editText"
         android:layout_width="wrap_content"
@@ -30,48 +70,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Snap"
-        tools:layout_editor_absoluteX="69dp"
-        tools:layout_editor_absoluteY="599dp" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search"
-        tools:layout_editor_absoluteX="208dp"
-        tools:layout_editor_absoluteY="594dp" />
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Left"
-        tools:layout_editor_absoluteX="67dp"
-        tools:layout_editor_absoluteY="512dp" />
-
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Right"
-        tools:layout_editor_absoluteX="206dp"
-        tools:layout_editor_absoluteY="508dp" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="temp_timestamp"
-        tools:layout_editor_absoluteX="154dp"
-        tools:layout_editor_absoluteY="465dp" />
-
     <EditText
-        android:id="@+id/edit_Add_Captions"
+        android:id="@+id/captionsEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -81,9 +81,17 @@
         tools:layout_editor_absoluteY="411dp" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/currentImageView"
         android:layout_width="202dp"
         android:layout_height="195dp"
         tools:layout_editor_absoluteX="91dp"
         tools:layout_editor_absoluteY="167dp" />
+
+    <TextView
+        android:id="@+id/timestampText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="temp_timestamp"
+        tools:layout_editor_absoluteX="154dp"
+        tools:layout_editor_absoluteY="465dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
