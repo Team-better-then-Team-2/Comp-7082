@@ -12,7 +12,7 @@ public class Photo {
 
     private String name;
 
-    private File photo;
+    private String photo;
 
     private String timeStamp;
 
@@ -20,12 +20,20 @@ public class Photo {
 
     private String localtion;
 
-    public Photo(String name, File photo, String timeStamp, String description, String localtion) {
+    public Photo(String name, String photo, String timeStamp, String description, String localtion) {
         this.name = name;
         this.photo = photo;
         this.timeStamp = timeStamp;
         this.description = description;
         this.localtion = localtion;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -36,11 +44,11 @@ public class Photo {
         this.name = name;
     }
 
-    public File getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(File photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 
