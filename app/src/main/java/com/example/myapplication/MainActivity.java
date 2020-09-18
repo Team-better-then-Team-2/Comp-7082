@@ -123,4 +123,8 @@ public class MainActivity extends AppCompatActivity {
             img_photo.setImageURI(photoURI);
         }
     }
+    public void searchButton(View view){
+        Intent intent = new Intent(this, SearchViewActivity.class);
+        startActivityForResult(intent, 201);
+    }
 }
