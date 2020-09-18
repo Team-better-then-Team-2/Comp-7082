@@ -28,4 +28,17 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
+
+    public void searchButton(View view){
+        Intent intent = new Intent(this, SearchViewActivity.class);
+        startActivityForResult(intent, 201);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 201){
+            //then access the data with data.getStringExtra("h_filename_here")
+        }
+    }
 }
