@@ -1,6 +1,6 @@
 # Photo Gallery App - Team Better Than Team 2
 
-## Team Members
+## Team Members :>
 
 William Prout
 
