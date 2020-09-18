@@ -51,6 +51,7 @@
         android:id="@+id/buttonSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="searchButton"
         android:text="@string/search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -86,10 +87,9 @@
         app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textViewTimeStamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/temp_timestamp"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -162,6 +162,7 @@
         android:id="@+id/guideline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="searchButton"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.50121653" />
 </androidx.constraintlayout.widget.ConstraintLayout>

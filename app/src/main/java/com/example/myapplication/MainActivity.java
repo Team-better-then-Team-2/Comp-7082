@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.myapplication.DataStorage.PhotoDao;
 import com.example.myapplication.DataStorage.PhotoDatabase;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     Button buttonSend, buttonLeft, buttonRight, buttonSnap, buttonSearch;
     ImageView img_photo;
     String currentPhotoPath;
+    TextView timeStampView;
+    String timeStamp;
     static final int REQUEST_TAKE_PHOTO = 100;
     Uri photoURI;
 
@@ -56,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         buttonSearch = findViewById(R.id.buttonSearch);
         buttonSnap = findViewById(R.id.buttonSnap);
         img_photo = findViewById(R.id.imageView);
+        timeStampView = findViewById(R.id.textViewTimeStamp);
+
 
         buttonSnap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
     }
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),"images");
         try{
@@ -120,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 100){
+            timeStampView.setText(timeStamp);
             img_photo.setImageURI(photoURI);
         }
     }
