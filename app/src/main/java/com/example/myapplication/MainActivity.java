@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.room.Room;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        photoDatabase = Room.databaseBuilder(this,PhotoDatabase.class,"photo database")
+        photoDatabase = Room.databaseBuilder(this, PhotoDatabase.class, "photo database")
                 .allowMainThreadQueries().build();
 
         //for the entity, we are going to use photoDao to access those Query functions
@@ -70,20 +71,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
     private File createImageFile() throws IOException {
         // Create an image file name
         timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),"images");
-        try{
+        File storageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "images");
+        try {
             //make sure the directory was created
             storageDir.mkdir();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        File image = new File(storageDir, imageFileName+".jpg");
-        Log.d("uri",image.getAbsolutePath());
+        File image = new File(storageDir, imageFileName + ".jpg");
+        Log.d("uri", image.getAbsolutePath());
 
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
@@ -115,9 +117,9 @@ public class MainActivity extends AppCompatActivity {
         //  Log.d("log4", "takepictureintent is null");
     }
 
-    public void sendMessage(View view){
+    public void sendMessage(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
+        EditText editText = findViewById(R.id.editText);
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
@@ -125,12 +127,13 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 100){
+        if (requestCode == 100) {
             timeStampView.setText(timeStamp);
             img_photo.setImageURI(photoURI);
         }
     }
-    public void searchButton(View view){
+
+    public void searchButton(View view) {
         Intent intent = new Intent(this, SearchViewActivity.class);
         startActivityForResult(intent, 201);
     }

@@ -14,7 +14,7 @@ public class SearchViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_view);
     }
 
-    public void onSearchClick(View view){
+    public void onSearchClick(View view) {
         //String filename = grabFileName; editText1.getText()toString();
         Intent intent = new Intent();
 //        intent.putExtra("MESSAGE", filename);
