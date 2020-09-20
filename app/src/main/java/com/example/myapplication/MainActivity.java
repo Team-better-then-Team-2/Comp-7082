@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
         //for the entity, we are going to use photoDao to access those Query functions
         photoDao = photoDatabase.getPhotoDao();
-        buttonSend = findViewById(R.id.buttonSend);
         buttonLeft = findViewById(R.id.buttonLeft);
         buttonRight = findViewById(R.id.buttonRight);
         buttonSearch = findViewById(R.id.buttonSearch);
@@ -115,14 +114,6 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
         }
         //  Log.d("log4", "takepictureintent is null");
-    }
-
-    public void sendMessage(View view) {
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

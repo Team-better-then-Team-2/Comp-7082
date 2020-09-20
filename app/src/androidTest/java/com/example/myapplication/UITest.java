@@ -25,13 +25,6 @@ public class UITest {
             new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void listGoesOverTheFold() {
-        onView(withId(R.id.editText)).perform(typeText("This is a Test"), closeSoftKeyboard());
-        onView(withId(R.id.buttonSend)).perform(click());
-        onView(withId(R.id.textView)).check(matches(withText("This is a Test")));
-    }
-
-    @Test
     public void testKeywordBased() {
         onView(withId(R.id.buttonSearch)).perform(click());
         onView(withId(R.id.keywordsEditText)).perform(typeText("blue"), closeSoftKeyboard());
