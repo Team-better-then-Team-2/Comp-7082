@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.myapplication.DataStorage.Photo;
 import com.example.myapplication.DataStorage.PhotoDao;
 import com.example.myapplication.DataStorage.PhotoDatabase;
 
@@ -32,8 +33,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements InfoInputDialog.InfoInputDialogListener {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     PhotoDatabase photoDatabase;
     PhotoDao photoDao;
@@ -113,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
         }
+
+        openDialog();
         //  Log.d("log4", "takepictureintent is null");
     }
 
@@ -127,5 +131,31 @@ public class MainActivity extends AppCompatActivity {
     public void searchButton(View view) {
         Intent intent = new Intent(this, SearchViewActivity.class);
         startActivityForResult(intent, 201);
+    }
+
+    public void openDialog(){
+        InfoInputDialog myDialog = new InfoInputDialog();
+        myDialog.show(getSupportFragmentManager(),"information dilog");
+
+    }
+
+    @Override
+    public void applyText(String name, String info) {
+        Photo photo  = new Photo(name, currentPhotoPath,timeStamp,info,"Vancouver");
+        photoDao.addPhoto(photo);
+        updateView();
+    }
+
+    void updateView(){
+        List<Photo> list = photoDao.getAllPhotos();
+        String text="";
+
+        for(int i=0;i<list.size();i++){
+            Photo photo = list.get(i);
+            text += photo.getId() + ": " + photo.getName()+ "\n" + photo.getTimeStamp() + "\n"
+                    +photo.getPhoto()+ "\n" + photo.getDescription() + "\n\n\n";
+
+        }
+        Log.d("my photos", text);
     }
 }
