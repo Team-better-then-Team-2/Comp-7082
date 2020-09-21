@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     String timeStamp;
     static final int REQUEST_TAKE_PHOTO = 100;
     Uri photoURI;
+    File storageDir;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,38 +65,22 @@ public class MainActivity extends AppCompatActivity {
         img_photo = findViewById(R.id.imageView);
         timeStampView = findViewById(R.id.textViewTimeStamp);
 
-
-        buttonSnap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchTakePictureIntent();
-            }
-        });
+        storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if(!storageDir.isDirectory()){
+            storageDir.mkdir();
+            Log.d("uri", "onCreate: folder made");
+        } else {
+            Log.d("uri", "onCreate: folder already made");
+        }
 
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "images");
-        try {
-            //make sure the directory was created
-            storageDir.mkdir();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        File image = new File(storageDir, imageFileName + ".jpg");
-        Log.d("uri", image.getAbsolutePath());
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-
-        return image;
+    public void snapClicked(View view) {
+        dispatchTakePictureIntent();
     }
 
     private void dispatchTakePictureIntent() {
+        //start the camera app to take a photo
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         // Create the File where the photo should go
@@ -104,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (IOException ex) {
             //   Log.d("fail", "no photo file");
+            Log.e("MYAPP:", "exception", ex);
 
         }
         // Continue only if the File was successfully created
@@ -117,6 +105,30 @@ public class MainActivity extends AppCompatActivity {
         //  Log.d("log4", "takepictureintent is null");
     }
 
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        String imageFileName = "JPEG_" + timeStamp + "_";
+
+        File image = new File(storageDir, imageFileName + ".jpg");
+        Log.d("uri", image.getAbsolutePath());
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+
+        return image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {
+            timeStampView.setText(timeStamp);
+            img_photo.setImageURI(photoURI);
+        }
+    }
+
     public void sendMessage(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         EditText editText = findViewById(R.id.editText);
@@ -125,13 +137,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100) {
-            timeStampView.setText(timeStamp);
-            img_photo.setImageURI(photoURI);
-        }
-    }
+
 
     public void searchButton(View view) {
         Intent intent = new Intent(this, SearchViewActivity.class);

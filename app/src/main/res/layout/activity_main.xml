@@ -39,6 +39,7 @@
         android:id="@+id/buttonSnap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="snapClicked"
         android:text="@string/snap"
         app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toStartOf="@+id/buttonRight"
