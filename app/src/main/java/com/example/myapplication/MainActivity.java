@@ -39,10 +39,10 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     PhotoDatabase photoDatabase;
     PhotoDao photoDao;
-    Button buttonSend, buttonLeft, buttonRight, buttonSnap, buttonSearch;
+    Button buttonCaption, buttonLeft, buttonRight, buttonSnap, buttonSearch;
     ImageView img_photo;
     String currentPhotoPath;
-    TextView timeStampView;
+    TextView timeStampView, captionTextView;
     String timeStamp;
     static final int REQUEST_TAKE_PHOTO = 100;
     Uri photoURI;
@@ -56,13 +56,15 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
 
         //for the entity, we are going to use photoDao to access those Query functions
         photoDao = photoDatabase.getPhotoDao();
+
         buttonLeft = findViewById(R.id.buttonLeft);
         buttonRight = findViewById(R.id.buttonRight);
         buttonSearch = findViewById(R.id.buttonSearch);
         buttonSnap = findViewById(R.id.buttonSnap);
         img_photo = findViewById(R.id.imageView);
         timeStampView = findViewById(R.id.textViewTimeStamp);
-
+        buttonCaption = findViewById(R.id.editCaptionBtn);
+        captionTextView = findViewById(R.id.edit_Add_Captions);
 
         buttonSnap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +139,23 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         InfoInputDialog myDialog = new InfoInputDialog();
         myDialog.show(getSupportFragmentManager(),"information dilog");
 
+    }
+
+    public void editCaption(View view){
+        //buttonCaption, captionTextView
+        List<Photo> list = photoDao.getAllPhotos();
+        for(int i=0;i<list.size();i++){
+            Photo photo = list.get(i);
+            if(photo.getTimeStamp().equals(timeStampView.getText().toString())){
+                photo.setDescription(captionTextView.getText().toString());
+                photoDao.updateWords(photo);
+                String text = photo.getId() + ": " + photo.getName()+ "\n" + photo.getTimeStamp() + "\n"
+                        +photo.getPhoto()+ "\n" + photo.getDescription() + "\n\n\n";
+                Log.d("my photos", text);//delete this and above after
+                captionTextView.setText("");
+                break;
+            }
+        }
     }
 
     @Override
