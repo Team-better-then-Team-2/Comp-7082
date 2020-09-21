@@ -24,6 +24,6 @@ public interface PhotoDao {
     void DeleteAll();
 
     @Query("SELECT * FROM PHOTO ORDER BY ID DESC")
-    List<Photo> getAllWords();
+    List<Photo> getAllPhotos();
 
 }

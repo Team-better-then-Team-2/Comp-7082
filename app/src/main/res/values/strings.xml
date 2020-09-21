@@ -10,4 +10,8 @@
     <string name="edit_add_captions">add_captions</string>
     <string name="add_caption">Add Caption</string>
     <string name="Image">my photo</string>
+    <string name="EditTextPhotoName">EditTextPhotoName</string>
+    <string name="photoName">Photo\'s Name</string>
+    <string name="photoDescription">Description</string>
+    <string name="buttonSaveInfo">Save</string>
 </resources>
