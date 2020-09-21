@@ -132,6 +132,9 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         } else if(requestCode == REQUEST_SEARCH_PHOTO) {
             if(resultCode == Activity.RESULT_OK){
                 String message = data.getStringExtra("MESSAGE");
+                if(!message.isEmpty()){
+                    img_photo.setImageURI(Uri.parse(message));
+                }
                 Log.d("onclickSearchFunction: ", message);
             }
 

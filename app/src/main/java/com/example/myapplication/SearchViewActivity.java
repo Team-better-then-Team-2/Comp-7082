@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.myapplication.DataStorage.Photo;
 import com.example.myapplication.DataStorage.PhotoDao;
@@ -42,16 +43,42 @@ public class SearchViewActivity extends AppCompatActivity {
     }
 
     public void onSearchClick(View view) {
+        String keyword = searchKeyWord.getText().toString();
 
+        if(keyword!=null){
+            Log.d("when keyword empty", keyword);
+            photo_uri = searchKey(keyword.toLowerCase());
 
-        photo_uri = "bebebe";
-        Intent intent = new Intent();
+            if(photo_uri !=null){
+                Intent intent = new Intent();
+                intent.putExtra("MESSAGE", photo_uri);
+                setResult(Activity.RESULT_OK,intent);
+                finish();
+            }else{
+                Toast toast = Toast.makeText(getApplicationContext(), "Can not find the photo", Toast.LENGTH_SHORT);
+                toast.show();
+            }
 
-        intent.putExtra("MESSAGE", photo_uri);
-        setResult(Activity.RESULT_OK,intent);
+        }else{
+            Toast toast = Toast.makeText(getApplicationContext(), "You have to input a value", Toast.LENGTH_SHORT);
+            toast.show();
+            Log.d("when keyword empty2", keyword);
+        }
 
-        finish();
     }
+    public String searchKey(String key){
+        List<Photo> list = photoDao.getAllPhotos();
+        for(int i=0;i<list.size();i++){
+            Photo photo = list.get(i);
+            String name = photo.getName().toLowerCase();
+            String info = photo.getDescription().toLowerCase();
+            if(name.contains(key)||info.contains(key)){
+                return photo.getPhoto();
+            }
+        }
+        return null;
+    }
+
 
     void updateView(){
         List<Photo> list = photoDao.getAllPhotos();
