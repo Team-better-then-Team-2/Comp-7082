@@ -1,9 +1,12 @@
 package com.example.myapplication.DataStorage;
 
+import android.net.Uri;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.File;
+
 
 @Entity
 public class Photo {
@@ -14,15 +17,18 @@ public class Photo {
 
     private String photo;
 
+    private String photoUri;
+
     private String timeStamp;
 
     private String description;
 
     private String localtion;
 
-    public Photo(String name, String photo, String timeStamp, String description, String localtion) {
+    public Photo(String name, String photo, String photoUri, String timeStamp, String description, String localtion) {
         this.name = name;
         this.photo = photo;
+        this.photoUri = photoUri;
         this.timeStamp = timeStamp;
         this.description = description;
         this.localtion = localtion;
@@ -52,6 +58,10 @@ public class Photo {
         this.photo = photo;
     }
 
+    public String getPhotoUri() { return photoUri; }
+
+    public void setPhotoURI(String photoUri) { this.photoUri = photoUri; }
+
     public String getTimeStamp() {
         return timeStamp;
     }
@@ -75,4 +85,5 @@ public class Photo {
     public void setLocaltion(String localtion) {
         this.localtion = localtion;
     }
+
 }

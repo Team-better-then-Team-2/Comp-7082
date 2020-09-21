@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -31,6 +33,7 @@ import com.example.myapplication.DataStorage.PhotoDatabase;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     String timeStamp;
     static final int REQUEST_TAKE_PHOTO = 100;
     Uri photoURI;
+    int photoNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         timeStampView = findViewById(R.id.textViewTimeStamp);
         buttonCaption = findViewById(R.id.editCaptionBtn);
         captionTextView = findViewById(R.id.edit_Add_Captions);
+        photoNumber = getpictureindex();
 
         buttonSnap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,12 +132,46 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         if (requestCode == 100) {
             timeStampView.setText(timeStamp);
             img_photo.setImageURI(photoURI);
+            photoNumber = getpictureindex();
         }
     }
 
     public void searchButton(View view) {
         Intent intent = new Intent(this, SearchViewActivity.class);
         startActivityForResult(intent, 201);
+    }
+
+    public void leftButton(View view) {
+        if (photoNumber > 1) {
+            grabPhoto(--photoNumber);
+        }
+    }
+
+    public void rightButton(View view) {
+        List<Photo> photoList = photoDao.getAllPhotos();
+
+        if (photoNumber < photoList.size() -1) {
+            grabPhoto(++photoNumber);
+        }
+    }
+
+    public void grabPhoto(int y) {
+        List<Photo> photoList = photoDao.getAllPhotos();
+
+        Photo photo = photoList.get(y);
+        Uri uri = Uri.parse(photo.getPhotoUri());
+        img_photo.setImageURI(uri);
+    }
+
+    public int getpictureindex(){
+        List<Photo> list = photoDao.getAllPhotos();
+        for(int i= 0; i< list.size(); ++i){
+            Photo photo = list.get(i);
+            if(photo.getTimeStamp().equals(timeStampView.getText().toString())){
+                return photo.getId();
+            }
+        }
+        return 0;
     }
 
     public void openDialog(){
@@ -160,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
 
     @Override
     public void applyText(String name, String info) {
-        Photo photo  = new Photo(name, currentPhotoPath,timeStamp,info,"Vancouver");
+        Photo photo  = new Photo(name, currentPhotoPath,photoURI.toString(),timeStamp,info,"Vancouver");
         photoDao.addPhoto(photo);
         updateView();
     }
