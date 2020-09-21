@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         updateView();
     }
 
+
     void updateView(){
         List<Photo> list = photoDao.getAllPhotos();
         String text="";
