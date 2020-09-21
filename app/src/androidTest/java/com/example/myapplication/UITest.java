@@ -15,7 +15,6 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static androidx.test.espresso.Espresso.onData;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
