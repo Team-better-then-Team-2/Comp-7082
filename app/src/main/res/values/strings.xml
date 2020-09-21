@@ -13,4 +13,9 @@
     <string name="photoName">Photo\'s Name</string>
     <string name="photoDescription">Description</string>
     <string name="buttonSaveInfo">Save</string>
+    <string name="keywords">Keywords</string>
+    <string name="yyyymmdd">yyyyMMdd</string>
+    <string name="to">To:</string>
+    <string name="from">From:</string>
+    <string name="searchPhoto">Search</string>
 </resources>
