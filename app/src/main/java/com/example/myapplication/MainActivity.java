@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     TextView timeStampView, captionTextView;
     String timeStamp;
     static final int REQUEST_TAKE_PHOTO = 100;
+    static final int REQUEST_SEARCH_PHOTO = 201;
     Uri photoURI;
     int photoNumber;
 
@@ -129,16 +131,24 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100) {
+        if (requestCode == REQUEST_TAKE_PHOTO) {
             timeStampView.setText(timeStamp);
             img_photo.setImageURI(photoURI);
-            photoNumber = getpictureindex();
+          photoNumber = getpictureindex();
+        } else if(requestCode == REQUEST_SEARCH_PHOTO) {
+            if(resultCode == Activity.RESULT_OK){
+                String message = data.getStringExtra("MESSAGE");
+                if(!message.isEmpty()){
+                    img_photo.setImageURI(Uri.parse(message));
+                }
+                Log.d("onclickSearchFunction: ", message);
+            }
         }
     }
 
     public void searchButton(View view) {
         Intent intent = new Intent(this, SearchViewActivity.class);
-        startActivityForResult(intent, 201);
+        startActivityForResult(intent, REQUEST_SEARCH_PHOTO);
     }
 
     public void leftButton(View view) {
@@ -203,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         photoDao.addPhoto(photo);
         updateView();
     }
+
 
     void updateView(){
         List<Photo> list = photoDao.getAllPhotos();
