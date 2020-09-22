@@ -23,8 +23,11 @@ public class SearchViewActivity extends AppCompatActivity {
     PhotoDao photoDao;
     private String photo_uri;
     EditText searchKeyWord;
-    EditText dateFrom;
-    EditText dateTo;
+    EditText editTextdateFrom;
+    EditText editTextdateTo;
+    int dateFrom;
+    int dateTo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +39,10 @@ public class SearchViewActivity extends AppCompatActivity {
         //for the entity, we are going to use photoDao to access those Query functions
         photoDao = photoDatabase.getPhotoDao();
 
-        searchKeyWord = findViewById(R.id.keywordsEditText);
+        editTextdateFrom = findViewById(R.id.editTextFromDate);
+        editTextdateTo = findViewById(R.id.editTextToDate);
 
+        searchKeyWord = findViewById(R.id.keywordsEditText);
         updateView();
 
     }
@@ -67,13 +72,37 @@ public class SearchViewActivity extends AppCompatActivity {
 
     }
     public String searchKey(String key){
+        String date1;
+        String date2;
+        date1 = editTextdateFrom.getText().toString();
+        date2 = editTextdateTo.getText().toString();
+        if(!date1.isEmpty() && !date2.isEmpty()){
+            dateFrom = Integer.parseInt(date1);
+            dateTo = Integer.parseInt(date2);
+        }else{
+            dateFrom = 0;
+            dateTo = 0;
+        }
+
+        Log.d("time limit", "From " + dateFrom +", To "+dateTo);
+
         List<Photo> list = photoDao.getAllPhotos();
         for(int i=0;i<list.size();i++){
             Photo photo = list.get(i);
             String name = photo.getName().toLowerCase();
             String info = photo.getDescription().toLowerCase();
             if(name.contains(key)||info.contains(key)){
-                return photo.getPhoto();
+                if(dateFrom!=0){
+                    String temp = photo.getTimeStamp();
+                    int temp2 = Integer.parseInt(temp.substring(0,8));
+                    Log.d("time", "From " + dateFrom +", To "+dateTo +" , Now: "+temp2);
+
+                    if(temp2>=dateFrom && temp2<=dateTo){
+                        return photo.getPhoto();
+                    }
+                }else{
+                    return photo.getPhoto();
+                }
             }
         }
         return null;
