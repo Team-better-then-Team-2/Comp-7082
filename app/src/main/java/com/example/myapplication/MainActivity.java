@@ -3,28 +3,26 @@ package com.example.myapplication;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.room.Room;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
-import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,14 +30,19 @@ import com.example.myapplication.DataStorage.Photo;
 import com.example.myapplication.DataStorage.PhotoDao;
 import com.example.myapplication.DataStorage.PhotoDatabase;
 
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationListener;
+
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements InfoInputDialog.InfoInputDialogListener {
+public class MainActivity extends AppCompatActivity implements InfoInputDialog.InfoInputDialogListener, LocationListener {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     PhotoDatabase photoDatabase;
     PhotoDao photoDao;
@@ -48,10 +51,14 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     String currentPhotoPath;
     TextView timeStampView, captionTextView;
     String timeStamp;
+    double latitude;
+    double longitude;
     static final int REQUEST_TAKE_PHOTO = 100;
     static final int REQUEST_SEARCH_PHOTO = 201;
     Uri photoURI;
     int photoNumber;
+    LocationManager locationManager;
+    String city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +87,24 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
             }
         });
 
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        if(location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
+
+        }
+        else {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
+
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
     }
 
     private File createImageFile() throws IOException {
@@ -207,9 +232,47 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         }
     }
 
+    //request location update
+    void updateLocation() {
+        try {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //updates lat and long variables when location changes
+    public void onLocationChanged(Location location) {
+        if (location != null) {
+            Log.v("Location Changed", location.getLatitude() + " and " + location.getLongitude());
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            locationManager.removeUpdates(this);
+        }
+    }
+
+    //converts coordinates to city and province/state
+    public String coordinatesToCity(){
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            String cityName = addresses.get(0).getLocality();
+            String provinceState = addresses.get(0).getAdminArea();
+            return cityName + ", " + provinceState;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "City Not Found";
+        }
+    }
+
     @Override
     public void applyText(String name, String info) {
-        Photo photo  = new Photo(name, currentPhotoPath,photoURI.toString(),timeStamp,info,"Vancouver");
+        updateLocation();
+        city = coordinatesToCity();
+
+        Photo photo  = new Photo(name, currentPhotoPath,photoURI.toString(),timeStamp,info,city);
         photoDao.addPhoto(photo);
         updateView();
     }
@@ -222,9 +285,13 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         for(int i=0;i<list.size();i++){
             Photo photo = list.get(i);
             text += photo.getId() + ": " + photo.getName()+ "\n" + photo.getTimeStamp() + "\n"
-                    +photo.getPhoto()+ "\n" + photo.getDescription() + "\n\n\n";
+                    +photo.getPhoto()+ "\n" + photo.getDescription() + "\n" + photo.getLocaltion()+ "\n\n\n";
 
         }
         Log.d("my photos", text);
     }
+
+    public void onProviderDisabled(String arg0) {}
+    public void onProviderEnabled(String arg0) {}
+    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
 }
