@@ -14,6 +14,7 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -26,9 +27,9 @@ public class UITest {
     @Test
     public void testKeywordBased() {
         onView(withId(R.id.buttonSearch)).perform(click());
-        onView(withId(R.id.keywordsEditText)).perform(typeText("blue"), closeSoftKeyboard());
+        onView(withId(R.id.keywordsEditText)).perform(typeText("Blue"), closeSoftKeyboard());
         onView(withId(R.id.searchViewBtn)).perform(click());
-        onView(withId(R.id.edit_Add_Captions)).check(matches(withId(R.id.keywordsEditText))); //also will fail
+        onView(withId(R.id.edit_Add_Captions)).check(matches(withText("Blue"))); //also will fail
     }
 
     @Test
