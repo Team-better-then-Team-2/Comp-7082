@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     }
 
     public void leftButton(View view) {
-        if (photoNumber > 1) {
+        if (photoNumber > 0) {
             grabPhoto(--photoNumber);
         }
     }
