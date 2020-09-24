@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import androidx.test.espresso.action.GeneralClickAction;
+import androidx.test.espresso.action.Tap;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
@@ -26,13 +28,15 @@ public class UITest {
 
     @Test
     public void testKeywordBased() {
+        onView(withId(R.id.buttonSnap)).perform(click());
+        GeneralClickAction(Tap.SINGLE, [])
         onView(withId(R.id.buttonSearch)).perform(click());
         onView(withId(R.id.keywordsEditText)).perform(typeText("Blue"), closeSoftKeyboard());
         onView(withId(R.id.searchViewBtn)).perform(click());
         onView(withId(R.id.edit_Add_Captions)).check(matches(withText("Blue"))); //also will fail
     }
 
-    @Test
+   @Test
     public void testTimeBased() {
         onView(withId(R.id.buttonSearch)).perform(click());
         onView(withId(R.id.editTextFromDate)).perform(typeText("20200918"), closeSoftKeyboard());

@@ -1,8 +1,5 @@
 package com.example.myapplication;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -10,29 +7,28 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.room.Room;
-
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.room.Room;
 
 import com.example.myapplication.DataStorage.Photo;
 import com.example.myapplication.DataStorage.PhotoDao;
 import com.example.myapplication.DataStorage.PhotoDatabase;
-
-import android.location.Location;
-import android.location.LocationManager;
-import android.location.LocationListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,9 +98,14 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         }
-
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
+        try {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        }
+        catch(Exception e){
+            latitude = 100.01;
+            longitude = 50.10;
+        }
     }
 
     private File createImageFile() throws IOException {
