@@ -165,10 +165,15 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
                 String message = data.getStringExtra("MESSAGE");
                 if(!message.isEmpty()){
                     img_photo.setImageURI(Uri.parse(message));
+                    //captionTextView.setText();
                 }
                 Log.d("onclickSearchFunction: ", message);
             }
         }
+    }
+
+    public void updateActivityView(String imageUri){
+        List<Photo> list = photoDao.getAllPhotos();
     }
 
     public void searchButton(View view) {
@@ -226,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
                 String text = photo.getId() + ": " + photo.getName()+ "\n" + photo.getTimeStamp() + "\n"
                         +photo.getPhoto()+ "\n" + photo.getDescription() + "\n\n\n";
                 Log.d("my photos", text);//delete this and above after
-                captionTextView.setText("");
+                captionTextView.setText(captionTextView.getText().toString());
                 break;
             }
         }
