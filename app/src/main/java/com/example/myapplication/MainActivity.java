@@ -164,8 +164,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
             if(resultCode == Activity.RESULT_OK){
                 String message = data.getStringExtra("MESSAGE");
                 if(!message.isEmpty()){
-                    img_photo.setImageURI(Uri.parse(message));
-                    //captionTextView.setText();
+                    updateActivityView(message);
                 }
                 Log.d("onclickSearchFunction: ", message);
             }
@@ -174,6 +173,15 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
 
     public void updateActivityView(String imageUri){
         List<Photo> list = photoDao.getAllPhotos();
+        for(int i= 0; i< list.size(); ++i){
+            Photo photo = list.get(i);
+            Log.d("uAv", "uAv: " + photo.getPhoto() + " : " + imageUri);
+            if(photo.getPhoto().equalsIgnoreCase(imageUri)){
+                img_photo.setImageURI(Uri.parse(imageUri));
+                timeStampView.setText(photo.getTimeStamp());
+                captionTextView.setText(photo.getDescription());
+            }
+        }
     }
 
     public void searchButton(View view) {
@@ -199,8 +207,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         List<Photo> photoList = photoDao.getAllPhotos();
 
         Photo photo = photoList.get(y);
-        Uri uri = Uri.parse(photo.getPhotoUri());
-        img_photo.setImageURI(uri);
+        updateActivityView(photo.getPhoto());
     }
 
     public int getpictureindex(){
