@@ -103,8 +103,14 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         }
 
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
+        try {
+            location.getLatitude();
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        } catch (Exception e) {
+            latitude = 49.2827;
+            longitude = 123.1207;
+        }
     }
 
     private File createImageFile() throws IOException {
