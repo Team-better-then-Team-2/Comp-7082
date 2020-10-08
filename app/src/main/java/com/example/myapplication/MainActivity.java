@@ -83,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         buttonSnap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //camera
+                //There are 5 steps to take photo, means five functions are called
+                //please follow the 5 steps in orderS
                 dispatchTakePictureIntent();
             }
         });
@@ -107,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         longitude = location.getLongitude();
     }
 
+    //Camera Snap function: 2 Create a file for incoming photo
     private File createImageFile() throws IOException {
         // Create an image file name
         timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -128,32 +132,36 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         return image;
     }
 
+    //Camera Snap function: 1 open a camera intent
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         // Create the File where the photo should go
         File photoFile = null;
         try {
-            // give value for image file");
+            // Call step 2 function, open a file for incoming photo
             photoFile = createImageFile();
 
         } catch (IOException ex) {
-            //   Log.d("fail", "no photo file");
+            Log.d("fail", "no photo file");
 
         }
         // Continue only if the File was successfully created
         if (photoFile != null) {
+            //After file created, save the photo in it after click snap
             photoURI = FileProvider.getUriForFile(this,
                     "com.example.myapplication.fileprovider",
                     photoFile);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            // call step 3 function
             startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
         }
 
+        // call step 4 function.
         openDialog();
-        //  Log.d("log4", "takepictureintent is null");
     }
 
+    //Camera Snap function: 3 update all info views in the main layout
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO) {
@@ -221,6 +229,10 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         return 0;
     }
 
+
+    //Camera Snap function: 4 after we have the picture
+    //                      open a new intent to let user to enter related information
+    //                      include name and description
     public void openDialog(){
         InfoInputDialog myDialog = new InfoInputDialog();
         myDialog.show(getSupportFragmentManager(),"information dilog");
@@ -244,6 +256,11 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         }
     }
 
+
+    //Camera Snap function: 5, there is a listener inside dialog intent
+    //                      once something is enter inside dialog has been update
+    //                      tihs function will be automatically called.
+    //After snap a picture, make a photo object and save it into database
     //request location update
     void updateLocation() {
         try {
@@ -290,6 +307,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     }
 
 
+    //log test function, to see whether the texts successfully created.
     void updateView(){
         List<Photo> list = photoDao.getAllPhotos();
         String text="";
