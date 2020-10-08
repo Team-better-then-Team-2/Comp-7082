@@ -27,9 +27,15 @@ public class UITest {
     @Test
     public void testKeywordBased() {
         onView(withId(R.id.buttonSearch)).perform(click());
+
         onView(withId(R.id.keywordsEditText)).perform(typeText("roof"), closeSoftKeyboard());
         onView(withId(R.id.searchViewBtn)).perform(click());
         onView(withId(R.id.edit_Add_Captions)).check(matches(withText("my roof on the top"))); //also will fail
+
+        //onView(withId(R.id.keywordsEditText)).perform(typeText("Blue"), closeSoftKeyboard());
+       // onView(withId(R.id.searchViewBtn)).perform(click());
+        //onView(withId(R.id.edit_Add_Captions)).check(matches(withText("Blue"))); //also will fail
+
     }
 
     @Test
