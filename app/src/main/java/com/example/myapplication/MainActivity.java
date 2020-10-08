@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
                 //There are 5 steps to take photo, means five functions are called
                 //please follow the 5 steps in orderS
                 dispatchTakePictureIntent();
+                openDialog();
             }
         });
 
@@ -158,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         }
 
         // call step 4 function.
-        openDialog();
     }
 
     //Camera Snap function: 3 update all info views in the main layout
@@ -257,11 +257,6 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     }
 
 
-    //Camera Snap function: 5, there is a listener inside dialog intent
-    //                      once something is enter inside dialog has been update
-    //                      tihs function will be automatically called.
-    //After snap a picture, make a photo object and save it into database
-    //request location update
     void updateLocation() {
         try {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -296,6 +291,11 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         }
     }
 
+    //Camera Snap function: 5, there is a listener inside dialog intent
+    //                      once something is enter inside dialog has been update
+    //                      tihs function will be automatically called.
+    //After snap a picture, make a photo object and save it into database
+    //request location update
     @Override
     public void applyText(String name, String info) {
         updateLocation();

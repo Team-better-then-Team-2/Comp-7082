@@ -18,4 +18,7 @@
     <string name="to">To:</string>
     <string name="from">From:</string>
     <string name="searchPhoto">Search</string>
+    <string name="locationValue">location</string>
+    <string name="locationValue">location</string>
+    <string name="locationTag">"Location: "</string>
 </resources>
