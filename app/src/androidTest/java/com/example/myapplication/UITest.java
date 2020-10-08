@@ -26,6 +26,7 @@ public class UITest {
 
     @Test
     public void testKeywordBased() {
+        onView(withId(R.id.buttonSnap)).perform(click());
         onView(withId(R.id.buttonSearch)).perform(click());
 
         onView(withId(R.id.keywordsEditText)).perform(typeText("roof"), closeSoftKeyboard());
@@ -38,7 +39,7 @@ public class UITest {
 
     }
 
-    @Test
+   @Test
     public void testTimeBased() {
         onView(withId(R.id.buttonSearch)).perform(click());
         onView(withId(R.id.keywordsEditText)).perform(typeText("roof"), closeSoftKeyboard());

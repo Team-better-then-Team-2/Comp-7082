@@ -1,11 +1,7 @@
 package com.example.myapplication.DataStorage;
 
-import android.net.Uri;
-
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
-import java.io.File;
 
 
 @Entity
@@ -23,15 +19,15 @@ public class Photo {
 
     private String description;
 
-    private String localtion;
+    private String location;
 
-    public Photo(String name, String photo, String photoUri, String timeStamp, String description, String localtion) {
+    public Photo(String name, String photo, String photoUri, String timeStamp, String description, String location) {
         this.name = name;
         this.photo = photo;
         this.photoUri = photoUri;
         this.timeStamp = timeStamp;
         this.description = description;
-        this.localtion = localtion;
+        this.location = location;
     }
 
     public void setId(int id) {
@@ -78,12 +74,12 @@ public class Photo {
         this.description = description;
     }
 
-    public String getLocaltion() {
-        return localtion;
+    public String getLocation() {
+        return location;
     }
 
-    public void setLocaltion(String localtion) {
-        this.localtion = localtion;
+    public void setLocation(String localtion) {
+        this.location = localtion;
     }
 
 }
