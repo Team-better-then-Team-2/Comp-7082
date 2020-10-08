@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     PhotoDatabase photoDatabase;
     PhotoDao photoDao;
-    Button buttonCaption, buttonLeft, buttonRight, buttonSnap, buttonSearch;
+    Button buttonCaption, buttonLeft, buttonRight, buttonSnap, buttonSearch, buttonUpload;
     ImageView img_photo;
     String currentPhotoPath;
     TextView timeStampView, captionTextView;
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         buttonCaption = findViewById(R.id.editCaptionBtn);
         captionTextView = findViewById(R.id.edit_Add_Captions);
         photoNumber = getpictureindex();
+        buttonUpload = findViewById(R.id.buttonUpload);
 
         buttonSnap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -294,6 +295,23 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
             e.printStackTrace();
             return "City Not Found";
         }
+    }
+
+    public void sharePhoto(String imageUri) {
+        //Bitmap icon = mBitmap;
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("image/jpeg");
+
+        share.putExtra(Intent.EXTRA_STREAM, Uri.parse(imageUri));
+        startActivity(Intent.createChooser(share, "Share Image"));
+    }
+
+    public void uploadButton(View view) {
+
+        List<Photo> photoList = photoDao.getAllPhotos();
+
+        Photo photo = photoList.get(photoNumber);
+        sharePhoto(photo.getPhotoUri());
     }
 
     @Override
