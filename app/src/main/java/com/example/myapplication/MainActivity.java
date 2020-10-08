@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     Button buttonCaption, buttonLeft, buttonRight, buttonSnap, buttonSearch, buttonUpload;
     ImageView img_photo;
     String currentPhotoPath;
-    TextView timeStampView, captionTextView;
+    TextView timeStampView, captionTextView, photoNameView, locationView;
     String timeStamp;
     double latitude;
     double longitude;
@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         buttonSnap = findViewById(R.id.buttonSnap);
         img_photo = findViewById(R.id.imageView);
         timeStampView = findViewById(R.id.textViewTimeStamp);
+        photoNameView = findViewById(R.id.textViewPhotoName);
+        locationView = findViewById(R.id.textViewPhotoLocation);
         buttonCaption = findViewById(R.id.editCaptionBtn);
         captionTextView = findViewById(R.id.edit_Add_Captions);
         photoNumber = getpictureindex();
@@ -189,7 +191,9 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
             if(photo.getPhoto().equalsIgnoreCase(imageUri)){
                 img_photo.setImageURI(Uri.parse(imageUri));
                 timeStampView.setText(photo.getTimeStamp());
+                photoNameView.setText(photo.getName());
                 captionTextView.setText(photo.getDescription());
+                locationView.setText(photo.getLocation());
             }
         }
     }
@@ -337,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         for(int i=0;i<list.size();i++){
             Photo photo = list.get(i);
             text += photo.getId() + ": " + photo.getName()+ "\n" + photo.getTimeStamp() + "\n"
-                    +photo.getPhoto()+ "\n" + photo.getDescription() + "\n" + photo.getLocaltion()+ "\n\n\n";
+                    +photo.getPhoto()+ "\n" + photo.getDescription() + "\n" + photo.getLocation()+ "\n\n\n";
 
         }
         Log.d("my photos", text);
