@@ -1,4 +1,4 @@
-package com.example.myapplication.DataStorage;
+package com.example.myapplication.Model;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;

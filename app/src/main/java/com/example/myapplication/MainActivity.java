@@ -26,9 +26,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.room.Room;
 
-import com.example.myapplication.DataStorage.Photo;
-import com.example.myapplication.DataStorage.PhotoDao;
-import com.example.myapplication.DataStorage.PhotoDatabase;
+import com.example.myapplication.Model.Photo;
+import com.example.myapplication.Model.PhotoDao;
+import com.example.myapplication.Model.PhotoDatabase;
+import com.example.myapplication.Presenter.CameraPresenter;
+import com.example.myapplication.Presenter.InfoInputDialog;
+import com.example.myapplication.View.CameraView;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +41,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements InfoInputDialog.InfoInputDialogListener, LocationListener {
+public class MainActivity extends AppCompatActivity implements InfoInputDialog.InfoInputDialogListener, LocationListener, CameraView {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     PhotoDatabase photoDatabase;
     PhotoDao photoDao;
@@ -55,29 +58,21 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     int photoNumber;
     LocationManager locationManager;
     String city;
+    CameraPresenter myCameraPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         photoDatabase = Room.databaseBuilder(this, PhotoDatabase.class, "photo database")
                 .allowMainThreadQueries().build();
 
         //for the entity, we are going to use photoDao to access those Query functions
         photoDao = photoDatabase.getPhotoDao();
 
-        buttonLeft = findViewById(R.id.buttonLeft);
-        buttonRight = findViewById(R.id.buttonRight);
-        buttonSearch = findViewById(R.id.buttonSearch);
-        buttonSnap = findViewById(R.id.buttonSnap);
-        img_photo = findViewById(R.id.imageView);
-        timeStampView = findViewById(R.id.textViewTimeStamp);
-        photoNameView = findViewById(R.id.textViewPhotoName);
-        locationView = findViewById(R.id.textViewPhotoLocation);
-        buttonCaption = findViewById(R.id.editCaptionBtn);
-        captionTextView = findViewById(R.id.edit_Add_Captions);
-        photoNumber = getpictureindex();
-        buttonUpload = findViewById(R.id.buttonUpload);
+        //initialize all of variables
+        init();
 
         buttonSnap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
             longitude = 50.10;
         }
     }
+
 
     //Camera Snap function: 2 Create a file for incoming photo
     private File createImageFile() throws IOException {
@@ -169,8 +165,8 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO) {
-            timeStampView.setText(timeStamp);
-            img_photo.setImageURI(photoURI);
+          //  timeStampView.setText(timeStamp);
+          //  img_photo.setImageURI(photoURI);
           photoNumber = getpictureindex();
         } else if(requestCode == REQUEST_SEARCH_PHOTO) {
             if(resultCode == Activity.RESULT_OK){
@@ -203,26 +199,6 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         startActivityForResult(intent, REQUEST_SEARCH_PHOTO);
     }
 
-    public void leftButton(View view) {
-        if (photoNumber > 0) {
-            grabPhoto(--photoNumber);
-        }
-    }
-
-    public void rightButton(View view) {
-        List<Photo> photoList = photoDao.getAllPhotos();
-
-        if (photoNumber < photoList.size() -1) {
-            grabPhoto(++photoNumber);
-        }
-    }
-
-    public void grabPhoto(int y) {
-        List<Photo> photoList = photoDao.getAllPhotos();
-
-        Photo photo = photoList.get(y);
-        updateActivityView(photo.getPhoto());
-    }
 
     public int getpictureindex(){
         List<Photo> list = photoDao.getAllPhotos();
@@ -247,19 +223,8 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
 
     public void editCaption(View view){
         //buttonCaption, captionTextView
-        List<Photo> list = photoDao.getAllPhotos();
-        for(int i=0;i<list.size();i++){
-            Photo photo = list.get(i);
-            if(photo.getTimeStamp().equals(timeStampView.getText().toString())){
-                photo.setDescription(captionTextView.getText().toString());
-                photoDao.updateWords(photo);
-                String text = photo.getId() + ": " + photo.getName()+ "\n" + photo.getTimeStamp() + "\n"
-                        +photo.getPhoto()+ "\n" + photo.getDescription() + "\n\n\n";
-                Log.d("my photos", text);//delete this and above after
-                captionTextView.setText(captionTextView.getText().toString());
-                break;
-            }
-        }
+
+        myCameraPresenter.editCaption(timeStampView.getText().toString(),captionTextView.getText().toString());
     }
 
 
@@ -327,27 +292,55 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         updateLocation();
         city = coordinatesToCity();
 
-        Photo photo  = new Photo(name, currentPhotoPath,photoURI.toString(),timeStamp,info,city);
-        photoDao.addPhoto(photo);
-        updateView();
+        //use presenter to access database.
+        myCameraPresenter.addPhoto(name, currentPhotoPath,photoURI.toString(),timeStamp,info,city);
     }
 
 
-    //log test function, to see whether the texts successfully created.
-    void updateView(){
-        List<Photo> list = photoDao.getAllPhotos();
-        String text="";
+    public void leftBotton(View view){
+        Log.d("id", "photoNumber : " + photoNumber);
 
-        for(int i=0;i<list.size();i++){
-            Photo photo = list.get(i);
-            text += photo.getId() + ": " + photo.getName()+ "\n" + photo.getTimeStamp() + "\n"
-                    +photo.getPhoto()+ "\n" + photo.getDescription() + "\n" + photo.getLocation()+ "\n\n\n";
+        photoNumber= myCameraPresenter.leftPhoto(photoNumber);
 
-        }
-        Log.d("my photos", text);
     }
+
+    public void rightBotton(View view){
+        Log.d("id", "photoNumber : " + photoNumber);
+        photoNumber = myCameraPresenter.rightPhoto(photoNumber);
+
+
+    }
+
+
 
     public void onProviderDisabled(String arg0) {}
     public void onProviderEnabled(String arg0) {}
     public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
+
+    public void init(){
+        buttonLeft = findViewById(R.id.buttonLeft);
+        buttonRight = findViewById(R.id.buttonRight);
+        buttonSearch = findViewById(R.id.buttonSearch);
+        buttonSnap = findViewById(R.id.buttonSnap);
+        img_photo = findViewById(R.id.imageView);
+        timeStampView = findViewById(R.id.textViewTimeStamp);
+        photoNameView = findViewById(R.id.textViewPhotoName);
+        locationView = findViewById(R.id.textViewPhotoLocation);
+        buttonCaption = findViewById(R.id.editCaptionBtn);
+        captionTextView = findViewById(R.id.edit_Add_Captions);
+        photoNumber = getpictureindex();
+        buttonUpload = findViewById(R.id.buttonUpload);
+        myCameraPresenter = new CameraPresenter(this,this);
+        photoNumber=0;
+    }
+
+
+    @Override
+    public void updatePhoto(Photo myphoto) {
+
+        timeStampView.setText(myphoto.getTimeStamp());
+        img_photo.setImageURI(Uri.parse(myphoto.getPhotoUri()));
+        captionTextView.setText(myphoto.getDescription());
+
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.Presenter;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
+
+import com.example.myapplication.R;
 
 public class InfoInputDialog extends AppCompatDialogFragment {
     private EditText name, info;

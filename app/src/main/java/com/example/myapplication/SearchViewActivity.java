@@ -11,9 +11,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
-import com.example.myapplication.DataStorage.Photo;
-import com.example.myapplication.DataStorage.PhotoDao;
-import com.example.myapplication.DataStorage.PhotoDatabase;
+import com.example.myapplication.Model.Photo;
+import com.example.myapplication.Model.PhotoDao;
+import com.example.myapplication.Model.PhotoDatabase;
 
 import java.util.List;
 
