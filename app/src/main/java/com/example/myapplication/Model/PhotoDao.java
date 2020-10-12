@@ -1,4 +1,4 @@
-package com.example.myapplication.DataStorage;
+package com.example.myapplication.Model;
 
 
 import androidx.room.Dao;
@@ -15,10 +15,10 @@ public interface PhotoDao {
     void addPhoto(Photo photo);
 
     @Update
-    void updateWords(Photo photo);
+    void updatePhotos(Photo photo);
 
     @Delete
-    void DeleteWords(Photo photo);
+    void DeletePhotos(Photo photo);
 
     @Query("DELETE FROM PHOTO")
     void DeleteAll();
