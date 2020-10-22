@@ -2,10 +2,12 @@ package com.example.myapplication.Presenter;
 
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.room.Room;
 
 import com.example.myapplication.MainActivity;
@@ -15,6 +17,8 @@ import com.example.myapplication.Model.PhotoDatabase;
 import com.example.myapplication.View.CameraView;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CameraPresenter implements GalleryPresenter{
     private PhotoDatabase photoDatabase;
@@ -72,16 +76,16 @@ public class CameraPresenter implements GalleryPresenter{
         grabPhoto(id);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public Photo uploadBnt(int id) {
         List<Photo> photoList = photoDao.getAllPhotos();
-        for(int i=0;i<photoList.size();i++) {
-            Photo photo = photoList.get(i);
-            if(id == photo.getId()){
-                return photo;
-            }
-        }
-        return null;
+        List<Photo> ph;
+        ph = (photoList.stream()
+                .filter(photo -> photo.getId()==id)).collect(Collectors.toList());
+        Log.d("my update", ph.get(0).getName());
+
+        return ph.get(0);
     }
 
     //search a photo based on ID
