@@ -36,12 +36,13 @@ public class CameraPresenter implements GalleryPresenter{
 
     //function for snap onclick
     @Override
-    public void addPhoto(String name, String path, String uri, String timeStamp, String info, String city) {
+    public int addPhoto(String name, String path, String uri, String timeStamp, String info, String city) {
         Photo photo  = new Photo(name, path,uri,timeStamp,info,city);
+        int size = 0;
         photoDao.addPhoto(photo);
-        updateView();
+        size = updateView();
         myView.updatePhoto(photo);
-
+        return size;
     }
 
     //function for left button onclick
@@ -66,21 +67,40 @@ public class CameraPresenter implements GalleryPresenter{
             return grabPhoto(myid);
     }
 
+    @Override
+    public void updateViewFromSearchResult(int id) {
+        grabPhoto(id);
+    }
 
-    private int grabPhoto(int id) {
-        Log.d("id", "id : " + id);
+    @Override
+    public Photo uploadBnt(int id) {
         List<Photo> photoList = photoDao.getAllPhotos();
-        if(id >= photoList.size()){
+        for(int i=0;i<photoList.size();i++) {
+            Photo photo = photoList.get(i);
+            if(id == photo.getId()){
+                return photo;
+            }
+        }
+        return null;
+    }
+
+    //search a photo based on ID
+    private int grabPhoto(int id) {
+        List<Photo> photoList = photoDao.getAllPhotos();
+        if(id > photoList.size()){
             Toast toast = Toast.makeText(mContext, "This is the last photo!", Toast.LENGTH_SHORT);
             toast.show();
             return id-1;
         }else{
-            Photo photo = photoList.get(id);
-            Log.d("name", "Name : " + photo.getName());
-            myView.updatePhoto(photoList.get(id));
-            return id;
+            for(int i=0;i<photoList.size();i++) {
+                Photo photo = photoList.get(i);
+                if(id == photo.getId()){
+                    myView.updatePhoto(photo);
+                    return id;
+                }
+            }
+            return 0;
         }
-
     }
 
     //function for editCaption button onclick
@@ -104,8 +124,9 @@ public class CameraPresenter implements GalleryPresenter{
         }
     }
 
+
     //log test function, to see whether the texts successfully created.
-    private void updateView(){
+    private int updateView(){
         List<Photo> list = photoDao.getAllPhotos();
         String text="";
 
@@ -115,6 +136,7 @@ public class CameraPresenter implements GalleryPresenter{
                     +photo.getPhoto()+ "\n" + photo.getDescription() + "\n" + photo.getLocation()+ "\n\n\n";
 
         }
-        Log.d("my photos", text);
+        Log.d("my new photos", text);
+        return list.size();
     }
 }
