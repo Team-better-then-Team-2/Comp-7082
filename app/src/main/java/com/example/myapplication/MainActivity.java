@@ -43,8 +43,6 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements InfoInputDialog.InfoInputDialogListener, LocationListener, CameraView {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-    PhotoDatabase photoDatabase;
-    PhotoDao photoDao;
     Button buttonCaption, buttonLeft, buttonRight, buttonSnap, buttonSearch, buttonUpload;
     ImageView img_photo;
     String currentPhotoPath;
@@ -65,12 +63,6 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        photoDatabase = Room.databaseBuilder(this, PhotoDatabase.class, "photo database")
-                .allowMainThreadQueries().build();
-
-        //for the entity, we are going to use photoDao to access those Query functions
-        photoDao = photoDatabase.getPhotoDao();
-
         //initialize all of variables
         init();
 
@@ -81,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
                 //There are 5 steps to take photo, means five functions are called
                 //please follow the 5 steps in orderS
                 dispatchTakePictureIntent();
-                openDialog();
             }
         });
 
@@ -159,37 +150,25 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         }
 
         // call step 4 function.
+        openDialog();
     }
 
     //Camera Snap function: 3 update all info views in the main layout
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO) {
-          //  timeStampView.setText(timeStamp);
-          //  img_photo.setImageURI(photoURI);
-          photoNumber = getpictureindex();
+
         } else if(requestCode == REQUEST_SEARCH_PHOTO) {
             if(resultCode == Activity.RESULT_OK){
                 String message = data.getStringExtra("MESSAGE");
-                if(!message.isEmpty()){
-                    updateActivityView(message);
+                int id = Integer.valueOf(message);
+                if(id!=0){
+                    //use presenter to access database
+                    myCameraPresenter.updateViewFromSearchResult(id);
+                    photoNumber = id;
+                    //updateActivityView(message);
                 }
-                Log.d("onclickSearchFunction: ", message);
-            }
-        }
-    }
-
-    public void updateActivityView(String imageUri){
-        List<Photo> list = photoDao.getAllPhotos();
-        for(int i= 0; i< list.size(); ++i){
-            Photo photo = list.get(i);
-            Log.d("uAv", "uAv: " + photo.getPhoto() + " : " + imageUri);
-            if(photo.getPhoto().equalsIgnoreCase(imageUri)){
-                img_photo.setImageURI(Uri.parse(imageUri));
-                timeStampView.setText(photo.getTimeStamp());
-                photoNameView.setText(photo.getName());
-                captionTextView.setText(photo.getDescription());
-                locationView.setText(photo.getLocation());
+                Log.d("onclickSearchFunction: ", String.valueOf(id));
             }
         }
     }
@@ -198,19 +177,6 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         Intent intent = new Intent(this, SearchViewActivity.class);
         startActivityForResult(intent, REQUEST_SEARCH_PHOTO);
     }
-
-
-    public int getpictureindex(){
-        List<Photo> list = photoDao.getAllPhotos();
-        for(int i= 0; i< list.size(); ++i){
-            Photo photo = list.get(i);
-            if(photo.getTimeStamp().equals(timeStampView.getText().toString())){
-                return photo.getId();
-            }
-        }
-        return 0;
-    }
-
 
     //Camera Snap function: 4 after we have the picture
     //                      open a new intent to let user to enter related information
@@ -264,7 +230,6 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
 
 
     public void sharePhoto(String imageUri) {
-        //Bitmap icon = mBitmap;
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/jpeg");
 
@@ -273,10 +238,7 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
     }
 
     public void uploadButton(View view) {
-
-        List<Photo> photoList = photoDao.getAllPhotos();
-
-        Photo photo = photoList.get(photoNumber);
+        Photo photo =myCameraPresenter.uploadBnt(photoNumber);
         sharePhoto(photo.getPhotoUri());
     }
   
@@ -293,22 +255,19 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         city = coordinatesToCity();
 
         //use presenter to access database.
-        myCameraPresenter.addPhoto(name, currentPhotoPath,photoURI.toString(),timeStamp,info,city);
+        photoNumber = myCameraPresenter.addPhoto(name, currentPhotoPath,photoURI.toString(),timeStamp,info,city);
+        Log.d("id", "myphotoNumber : " + photoNumber);
     }
 
 
     public void leftBotton(View view){
-        Log.d("id", "photoNumber : " + photoNumber);
-
+        //use presenter to access database
         photoNumber= myCameraPresenter.leftPhoto(photoNumber);
-
     }
 
     public void rightBotton(View view){
-        Log.d("id", "photoNumber : " + photoNumber);
+        //use presenter to access database
         photoNumber = myCameraPresenter.rightPhoto(photoNumber);
-
-
     }
 
 
@@ -328,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
         locationView = findViewById(R.id.textViewPhotoLocation);
         buttonCaption = findViewById(R.id.editCaptionBtn);
         captionTextView = findViewById(R.id.edit_Add_Captions);
-        photoNumber = getpictureindex();
         buttonUpload = findViewById(R.id.buttonUpload);
         myCameraPresenter = new CameraPresenter(this,this);
         photoNumber=0;
@@ -337,10 +295,13 @@ public class MainActivity extends AppCompatActivity implements InfoInputDialog.I
 
     @Override
     public void updatePhoto(Photo myphoto) {
-
         timeStampView.setText(myphoto.getTimeStamp());
         img_photo.setImageURI(Uri.parse(myphoto.getPhotoUri()));
         captionTextView.setText(myphoto.getDescription());
-
+        photoNameView.setText(myphoto.getName());
+        locationView.setText(myphoto.getLocation());
+        photoNumber = myphoto.getId();
+        Log.d("id", "photoid : " + photoNumber);
+        Log.d("new photo", "name: : " + myphoto.getName());
     }
 }

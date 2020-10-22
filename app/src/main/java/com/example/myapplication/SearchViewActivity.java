@@ -14,14 +14,14 @@ import androidx.room.Room;
 import com.example.myapplication.Model.Photo;
 import com.example.myapplication.Model.PhotoDao;
 import com.example.myapplication.Model.PhotoDatabase;
+import com.example.myapplication.Presenter.CameraPresenter;
+import com.example.myapplication.Presenter.SearchBtnPresenter;
 
 import java.util.List;
 
 public class SearchViewActivity extends AppCompatActivity {
 
-    PhotoDatabase photoDatabase;
-    PhotoDao photoDao;
-    private String photo_uri;
+    private int photo_id;
     private String location;
     EditText searchKeyWord;
     EditText editTextdateFrom;
@@ -29,17 +29,14 @@ public class SearchViewActivity extends AppCompatActivity {
     EditText searchlocation;
     int dateFrom;
     int dateTo;
+    SearchBtnPresenter myPresenter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_view);
-        photoDatabase = Room.databaseBuilder(this, PhotoDatabase.class, "photo database")
-                .allowMainThreadQueries().build();
-
-        //for the entity, we are going to use photoDao to access those Query functions
-        photoDao = photoDatabase.getPhotoDao();
+        myPresenter = new SearchBtnPresenter(this);
 
         editTextdateFrom = findViewById(R.id.editTextFromDate);
         editTextdateTo = findViewById(R.id.editTextToDate);
@@ -47,7 +44,6 @@ public class SearchViewActivity extends AppCompatActivity {
 
         searchKeyWord = findViewById(R.id.keywordsEditText);
         searchlocation = findViewById(R.id.editTextLocaltionName);
-        updateView();
 
     }
 
@@ -55,12 +51,11 @@ public class SearchViewActivity extends AppCompatActivity {
         String keyword = searchKeyWord.getText().toString();
 
         if(keyword!=null){
-            Log.d("when keyword empty", keyword);
-            photo_uri = searchKey(keyword.toLowerCase());
-
-            if(photo_uri !=null){
+            Log.d("when keyword not empty", keyword);
+            photo_id = searchKey(keyword.toLowerCase());
+            if(photo_id !=0){
                 Intent intent = new Intent();
-                intent.putExtra("MESSAGE", photo_uri);
+                intent.putExtra("MESSAGE", String.valueOf(photo_id));
                 setResult(Activity.RESULT_OK,intent);
                 finish();
             }else{
@@ -71,10 +66,9 @@ public class SearchViewActivity extends AppCompatActivity {
         }else{
             Toast toast = Toast.makeText(getApplicationContext(), "You have to input a value", Toast.LENGTH_SHORT);
             toast.show();
-            Log.d("when keyword empty2", keyword);
         }
     }
-    public String searchKey(String key){
+    public int searchKey(String key){
         String date1;
         String date2;
         String location1;
@@ -90,50 +84,12 @@ public class SearchViewActivity extends AppCompatActivity {
             dateTo = 0;
         }
 
-        Log.d("time limit", "From " + dateFrom +", To "+dateTo);
-
-        List<Photo> list = photoDao.getAllPhotos();
-        for(int i=0;i<list.size();i++){
-            Photo photo = list.get(i);
-            String name = photo.getName().toLowerCase();
-            String info = photo.getDescription().toLowerCase();
-            String locationinfo = photo.getLocation();
-
-            if(name.contains(key)||info.contains(key)){
-                if(locationinfo.contains(location1)) {
-                    if (dateFrom != 0) {
-                        String temp = photo.getTimeStamp();
-                        int temp2 = Integer.parseInt(temp.substring(0, 8));
-                        Log.d("time", "From " + dateFrom + ", To " + dateTo + " , Now: " + temp2);
-
-                        if (temp2 >= dateFrom && temp2 <= dateTo) {
-
-                            return photo.getPhoto();
-                        }
-                    } else {
-                        return photo.getPhoto();
-                    }
-                }
-            }
-        }
-        return null;
+        return myPresenter.searchKeyword(key, dateFrom,dateTo,location1);
     }
 
     public String[] getLocationdata(String photolocation){
         return photolocation.split(", ", 2);
     }
 
-    void updateView(){
-        List<Photo> list = photoDao.getAllPhotos();
-        String text="";
-
-        for(int i=0;i<list.size();i++){
-            Photo photo = list.get(i);
-            text += photo.getId() + ": " + photo.getName()+ "\n" + photo.getTimeStamp() + "\n"
-                    +photo.getPhoto()+ "\n" + photo.getDescription() + "\n\n\n";
-
-        }
-        Log.d("my photos from search", text);
-    }
 
 }
